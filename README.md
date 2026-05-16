@@ -19,7 +19,25 @@ Because everything lives in memgraph, you also get versioning, lineage, freshnes
 
 ### One-line install (macOS, Linux)
 
-> Pre-built binaries arrive with the first tagged release. Until then, use `go install` or build from source.
+```sh
+curl -fsSL https://raw.githubusercontent.com/camggould/memgraph-docs/main/install.sh | sh
+```
+
+Downloads the latest release from GitHub, verifies SHA-256 against `checksums.txt`, and installs `memgraph-docs` to `/usr/local/bin` (falling back to `$HOME/.local/bin` if `/usr/local/bin` isn't writable and `sudo` isn't available).
+
+Override defaults via env vars:
+
+```sh
+# Pin to a specific version
+curl -fsSL https://raw.githubusercontent.com/camggould/memgraph-docs/main/install.sh | MEMGRAPH_DOCS_VERSION=v0.1.0 sh
+
+# Install somewhere else
+curl -fsSL https://raw.githubusercontent.com/camggould/memgraph-docs/main/install.sh | MEMGRAPH_DOCS_INSTALL_DIR=$HOME/bin sh
+```
+
+### Pre-built binaries (manual)
+
+Tarballs and a `checksums.txt` are on the [Releases page](https://github.com/camggould/memgraph-docs/releases) for darwin/linux on amd64+arm64 and windows/amd64.
 
 ### `go install`
 
@@ -41,6 +59,16 @@ Pure-Go build, no cgo. Cross-compile for any supported target:
 
 ```sh
 GOOS=linux GOARCH=amd64 go build -o memgraph-docs-linux-amd64 ./cmd/memgraph-docs
+```
+
+### Cutting a new release (maintainers)
+
+The repo ships a `.goreleaser.yaml`. After tagging a new version on `main`:
+
+```sh
+git tag -a vX.Y.Z -m "vX.Y.Z"
+git push origin vX.Y.Z
+GITHUB_TOKEN=$(gh auth token) goreleaser release --clean
 ```
 
 ## Quickstart
